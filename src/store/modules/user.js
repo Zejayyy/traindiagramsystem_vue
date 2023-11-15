@@ -3,6 +3,7 @@ import { login } from '@/api/user'
 
 const state = {
   token: getToken(),
+  userInfo: {} // 存储用户基本资料
 };
 
 const mutations = {
@@ -15,14 +16,23 @@ const mutations = {
     state.token = null; // 清除vuex中的token
     removeToken(); // 清除缓存中的token
   },
+
+  SET_USER_INFO(state, userInfo) {
+    state.userInfo = userInfo;
+  }
 };
 
 const actions = {
   async login(context, data) {
-    const { username, password } = data
-    const token = await login({ username: username.trim(), password: password });
+    const token = await login(data);
     context.commit("SET_TOKEN", token);
   },
+
+  // 退出登录
+  async logout(context) {
+    context.commit('REMOVE_TOKEN'); // 删除 token
+    context.commit('SET_USER_INFO', {}); // 设置用户信息为空对象
+  }
 };
 
 export default {
